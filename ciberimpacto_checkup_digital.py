@@ -152,15 +152,15 @@ st.markdown(
     """
     <div class="hero">
         <div class="top-badge">🛡️ Check-Up Digital</div>
-        <h1>A sua empresa está preparada para um ataque informático?</h1>
-        <p>Responda a 6 perguntas rápidas e receba um resultado imediato.</p>
+        <h1>Na ótica do utilizador: sabe identificar um ataque informático?</h1>
+        <p>Responda a 6 situações do dia a dia e veja o seu nível de atenção digital.</p>
     </div>
     """,
     unsafe_allow_html=True
 )
 
 st.markdown('<div class="section-title">Check-up rápido</div>', unsafe_allow_html=True)
-st.info("Responda às perguntas. O resultado aparece no final.")
+st.info("Responda às situações como se estivesse no seu dia de trabalho. O resultado aparece no final.")
 
 perguntas = [
     {
