@@ -120,6 +120,17 @@ st.markdown(
             display: none;
         }}
 
+        .cta-link {{
+            display: inline-block;
+            margin-top: 12px;
+            background: linear-gradient(90deg, {PRIMARY}, {TURQUOISE});
+            color: #001020 !important;
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 999px;
+            font-weight: 800;
+        }}
+
         .footer {{
             text-align: center;
             color: #5B6B7A;
@@ -148,20 +159,13 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown('<div class="section-title">1. Dados rápidos</div>', unsafe_allow_html=True)
-col1, col2 = st.columns(2)
-with col1:
-    empresa = st.text_input("Empresa", placeholder="Nome da empresa")
-with col2:
-    email = st.text_input("Email", placeholder="email@empresa.pt")
-
-st.markdown('<div class="section-title">2. Perguntas visíveis</div>', unsafe_allow_html=True)
-st.info("Escolha uma resposta em cada pergunta. O resultado aparece no final.")
+st.markdown('<div class="section-title">Check-up rápido</div>', unsafe_allow_html=True)
+st.info("Responda às perguntas. O resultado aparece no final.")
 
 perguntas = [
     {
         "tema": "Phishing",
-        "pergunta": "Recebe um email urgente a pedir para clicar num link e validar a password. O que faz?",
+        "pergunta": "Imagine que está a trabalhar e recebe um email urgente a pedir para clicar num link e validar a sua password. O que faz?",
         "opcoes": [
             "Selecionar resposta",
             "Clico no link para resolver rapidamente",
@@ -291,6 +295,8 @@ if st.button("Ver resultado do check-up"):
                 <h2>Resultado: Risco {nivel}</h2>
                 <h3>{certas}/{total} respostas corretas · {percentagem}%</h3>
                 <p><strong>Recomendação CiberImpacto:</strong> {recomendacao}</p>
+                <p>Para saber mais sobre formação e sensibilização em cibersegurança, visite o site da CiberImpacto.</p>
+                <a class="cta-link" href="https://www.ciberimpacto.pt" target="_blank">Visitar site da CiberImpacto</a>
             </div>
             """,
             unsafe_allow_html=True
@@ -315,9 +321,6 @@ if st.button("Ver resultado do check-up"):
 CIBERIMPACTO - CHECK-UP DIGITAL
 
 Data: {data}
-Empresa: {empresa or 'Não indicado'}
-Email: {email or 'Não indicado'}
-
 Resultado: Risco {nivel}
 Pontuação: {certas}/{total}
 Percentagem: {percentagem}%
@@ -330,6 +333,9 @@ Temas a melhorar:
 
 Próximo passo sugerido:
 Agendar uma sessão de sensibilização em cibersegurança com a CiberImpacto.
+
+Site CiberImpacto:
+https://www.ciberimpacto.pt
 """
         st.download_button(
             "Descarregar relatório",
@@ -341,7 +347,8 @@ Agendar uma sessão de sensibilização em cibersegurança com a CiberImpacto.
 st.markdown(
     """
     <div class="footer">
-        CiberImpacto – Formação e Eventos | Capacitar pessoas. Proteger organizações.
+        CiberImpacto – Formação e Eventos | Capacitar pessoas. Proteger organizações.<br>
+        <a href="https://www.ciberimpacto.pt" target="_blank">www.ciberimpacto.pt</a>
     </div>
     """,
     unsafe_allow_html=True
