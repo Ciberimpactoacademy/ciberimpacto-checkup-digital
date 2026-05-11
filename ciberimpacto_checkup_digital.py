@@ -2,6 +2,8 @@ import streamlit as st
 from datetime import datetime
 import pandas as pd
 import io
+from pathlib import Path
+
 
 # ==========================================================
 # CIBERIMPACTO CHECK-UP DIGITAL
@@ -17,98 +19,291 @@ st.set_page_config(
 )
 
 # -------------------------
-# ESTILO VISUAL
+# ESTILO VISUAL - CORES CIBERIMPACTO
 # -------------------------
+CORES = {
+    "azul_principal": "#1482FF",
+    "azul_profundo": "#0A62FF",
+    "azul_claro": "#40BDF9",
+    "turquesa": "#12E9CA",
+    "verde_agua": "#0BE7C4",
+    "preto": "#000000",
+    "branco": "#FFFFFF",
+}
+
+LOGO_FICHEIROS = [
+    "logo_ciberimpacto.png",
+    "logo_ciberimpacto.jpg",
+    "logo_ciberimpacto.jpeg",
+    "logo_ciberimpacto.webp",
+]
+
 st.markdown(
     """
     <style>
-    .main {
-        background: linear-gradient(180deg, #F7FBFF 0%, #FFFFFF 100%);
+    :root {
+        --ci-blue: #1482FF;
+        --ci-blue-dark: #0A62FF;
+        --ci-blue-light: #40BDF9;
+        --ci-turquoise: #12E9CA;
+        --ci-mint: #0BE7C4;
+        --ci-black: #000000;
+        --ci-white: #FFFFFF;
+        --ci-soft: #F3FAFF;
+        --ci-text: #111827;
+        --ci-muted: #5B6B7D;
     }
+
+    .stApp {
+        background:
+            radial-gradient(circle at top left, rgba(18, 233, 202, 0.18) 0%, transparent 28%),
+            radial-gradient(circle at top right, rgba(20, 130, 255, 0.18) 0%, transparent 30%),
+            linear-gradient(180deg, #F7FCFF 0%, #FFFFFF 45%, #F8FBFF 100%);
+    }
+
     .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-        max-width: 950px;
+        padding-top: 1.5rem;
+        padding-bottom: 2.5rem;
+        max-width: 980px;
     }
-    .hero {
-        padding: 28px;
-        border-radius: 24px;
-        background: linear-gradient(135deg, #0A62FF 0%, #12E9CA 100%);
+
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #020817 0%, #071A3A 55%, #0A62FF 100%);
         color: white;
-        box-shadow: 0 18px 45px rgba(10, 98, 255, 0.20);
-        margin-bottom: 20px;
     }
-    .hero h1 {
-        font-size: 2.25rem;
-        margin-bottom: 0.5rem;
+
+    [data-testid="stSidebar"] * {
+        color: white !important;
     }
-    .hero p {
-        font-size: 1.05rem;
-        line-height: 1.6;
-    }
-    .card {
-        padding: 22px;
-        border-radius: 20px;
-        background-color: white;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-        border: 1px solid #EAF1FB;
+
+    .brand-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
         margin-bottom: 18px;
     }
+
+    .brand-logo-fallback {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.92);
+        border: 1px solid rgba(20,130,255,0.15);
+        box-shadow: 0 16px 40px rgba(10, 98, 255, 0.12);
+        width: fit-content;
+        margin-bottom: 18px;
+    }
+
+    .brand-logo-fallback .bulb {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--ci-blue-dark), var(--ci-turquoise));
+        color: white;
+        font-size: 1.45rem;
+    }
+
+    .brand-logo-fallback .brand-name {
+        color: var(--ci-text);
+        font-weight: 900;
+        font-size: 1.25rem;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+    }
+
+    .brand-logo-fallback .brand-subtitle {
+        color: var(--ci-muted);
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .hero {
+        position: relative;
+        overflow: hidden;
+        padding: 34px;
+        border-radius: 28px;
+        background:
+            radial-gradient(circle at 12% 0%, rgba(18, 233, 202, 0.34), transparent 28%),
+            radial-gradient(circle at 90% 20%, rgba(64, 189, 249, 0.26), transparent 30%),
+            linear-gradient(135deg, #020817 0%, #082B66 46%, #0A62FF 100%);
+        color: white;
+        box-shadow: 0 24px 70px rgba(10, 98, 255, 0.24);
+        margin-bottom: 22px;
+        border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .hero:after {
+        content: "";
+        position: absolute;
+        width: 260px;
+        height: 260px;
+        right: -90px;
+        bottom: -110px;
+        background: rgba(18, 233, 202, 0.22);
+        border-radius: 999px;
+        filter: blur(2px);
+    }
+
+    .hero h1 {
+        font-size: 2.35rem;
+        line-height: 1.1;
+        margin-bottom: 0.75rem;
+        letter-spacing: -0.04em;
+        max-width: 760px;
+    }
+
+    .hero p {
+        font-size: 1.08rem;
+        line-height: 1.65;
+        max-width: 760px;
+        opacity: 0.96;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.13);
+        border: 1px solid rgba(255,255,255,0.18);
+        color: white;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 14px;
+    }
+
+    .card {
+        padding: 24px;
+        border-radius: 24px;
+        background: rgba(255,255,255,0.94);
+        box-shadow: 0 14px 42px rgba(10, 98, 255, 0.08);
+        border: 1px solid rgba(20,130,255,0.12);
+        margin-bottom: 18px;
+    }
+
+    .card h3 {
+        color: var(--ci-text);
+        letter-spacing: -0.02em;
+    }
+
     .mini-card {
-        padding: 16px;
-        border-radius: 16px;
-        background-color: #F7FBFF;
-        border: 1px solid #DDEBFF;
-        margin-bottom: 12px;
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #FFFFFF 0%, #F2FBFF 100%);
+        border: 1px solid rgba(64,189,249,0.28);
+        margin-bottom: 10px;
+        box-shadow: 0 8px 20px rgba(10, 98, 255, 0.045);
     }
+
+    .metric-card {
+        padding: 18px;
+        border-radius: 20px;
+        background: white;
+        border: 1px solid rgba(20,130,255,0.12);
+        box-shadow: 0 10px 30px rgba(10, 98, 255, 0.06);
+    }
+
+    .risk-low, .risk-medium, .risk-high, .risk-critical {
+        padding: 22px;
+        border-radius: 24px;
+        box-shadow: 0 14px 36px rgba(0,0,0,0.06);
+        margin-bottom: 10px;
+    }
+
     .risk-low {
-        padding: 18px;
-        border-radius: 18px;
-        background-color: #E9FFF5;
-        border-left: 8px solid #00A86B;
+        background: linear-gradient(135deg, #E9FFF8 0%, #FFFFFF 100%);
+        border-left: 9px solid #0BE7C4;
     }
+
     .risk-medium {
-        padding: 18px;
-        border-radius: 18px;
-        background-color: #FFF8E1;
-        border-left: 8px solid #F9A825;
+        background: linear-gradient(135deg, #FFF8E1 0%, #FFFFFF 100%);
+        border-left: 9px solid #F9A825;
     }
+
     .risk-high {
-        padding: 18px;
-        border-radius: 18px;
-        background-color: #FFF1E8;
-        border-left: 8px solid #EF6C00;
+        background: linear-gradient(135deg, #FFF1E8 0%, #FFFFFF 100%);
+        border-left: 9px solid #EF6C00;
     }
+
     .risk-critical {
-        padding: 18px;
-        border-radius: 18px;
-        background-color: #FFECEC;
-        border-left: 8px solid #D32F2F;
+        background: linear-gradient(135deg, #FFECEC 0%, #FFFFFF 100%);
+        border-left: 9px solid #D32F2F;
     }
+
     .small-text {
         font-size: 0.92rem;
-        color: #536274;
+        color: var(--ci-muted);
     }
+
+    .highlight-line {
+        height: 5px;
+        width: 120px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--ci-blue), var(--ci-turquoise));
+        margin: 14px 0 18px 0;
+    }
+
     .footer {
-        margin-top: 30px;
-        color: #6B7280;
-        font-size: 0.85rem;
+        margin-top: 34px;
+        color: #607086;
+        font-size: 0.86rem;
         text-align: center;
     }
-    div.stButton > button:first-child {
-        border-radius: 14px;
-        border: 0px;
-        background: #0A62FF;
-        color: white;
-        padding: 0.7rem 1.1rem;
-        font-weight: 700;
+
+    .footer strong {
+        color: var(--ci-blue-dark);
     }
+
+    div.stButton > button:first-child,
+    div.stFormSubmitButton > button:first-child {
+        border-radius: 16px;
+        border: 0px;
+        background: linear-gradient(135deg, var(--ci-blue-dark), var(--ci-turquoise));
+        color: white;
+        padding: 0.78rem 1.25rem;
+        font-weight: 800;
+        box-shadow: 0 12px 28px rgba(10, 98, 255, 0.22);
+        transition: all 0.2s ease;
+    }
+
+    div.stButton > button:first-child:hover,
+    div.stFormSubmitButton > button:first-child:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 16px 34px rgba(10, 98, 255, 0.28);
+        color: white;
+    }
+
     div.stDownloadButton > button:first-child {
+        border-radius: 16px;
+        border: 1px solid var(--ci-blue);
+        background: white;
+        color: var(--ci-blue-dark);
+        padding: 0.78rem 1.25rem;
+        font-weight: 800;
+    }
+
+    .stProgress > div > div > div > div {
+        background: linear-gradient(90deg, var(--ci-blue), var(--ci-turquoise));
+    }
+
+    div[data-baseweb="radio"] label {
+        background: white;
+        border: 1px solid rgba(20,130,255,0.18);
         border-radius: 14px;
-        border: 1px solid #0A62FF;
-        color: #0A62FF;
-        padding: 0.7rem 1.1rem;
-        font-weight: 700;
+        padding: 8px 10px;
+        margin-right: 8px;
+    }
+
+    a {
+        color: var(--ci-blue-dark);
     }
     </style>
     """,
@@ -254,6 +449,56 @@ NIVEIS_RESPOSTA = {
     "Não": 0.0,
     "Não sei": 0.0,
 }
+
+# -------------------------
+# LOGÓTIPO
+# -------------------------
+def encontrar_logo_local():
+    """Procura automaticamente um ficheiro de logótipo na mesma pasta da aplicação."""
+    for ficheiro in LOGO_FICHEIROS:
+        caminho = Path(ficheiro)
+        if caminho.exists():
+            return str(caminho)
+    return None
+
+
+def mostrar_logo(largura=240, sidebar=False):
+    """Mostra o logótipo da CiberImpacto se existir. Caso contrário, mostra uma versão textual elegante."""
+    logo_bytes = st.session_state.get("logo_bytes")
+    logo_local = encontrar_logo_local()
+
+    if logo_bytes:
+        st.image(io.BytesIO(logo_bytes), width=largura)
+        return
+
+    if logo_local:
+        st.image(logo_local, width=largura)
+        return
+
+    # Fallback caso ainda não exista um ficheiro de logótipo carregado
+    if sidebar:
+        st.markdown(
+            """
+            <div style="padding:14px 0 8px 0;">
+                <div style="font-size:1.45rem;font-weight:900;line-height:1;color:white;">💡 CiberImpacto</div>
+                <div style="font-size:0.75rem;opacity:.86;text-transform:uppercase;letter-spacing:.08em;margin-top:6px;">Formação e Eventos</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    else:
+        st.markdown(
+            """
+            <div class="brand-logo-fallback">
+                <div class="bulb">💡</div>
+                <div>
+                    <div class="brand-name">CiberImpacto</div>
+                    <div class="brand-subtitle">Formação e Eventos</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
 # -------------------------
 # FUNÇÕES
@@ -419,11 +664,13 @@ def criar_csv_respostas():
 # ECRÃS
 # -------------------------
 def ecra_inicio():
+    mostrar_logo(largura=260)
     st.markdown(
         """
         <div class="hero">
-            <h1>🔐 CiberImpacto Check-Up Digital</h1>
-            <p>Uma aplicação simples e intuitiva para sensibilizar empresas sobre phishing, passwords, ransomware, engenharia social e resposta a incidentes.</p>
+            <div class="hero-badge">🔐 Check-Up Digital para Empresas</div>
+            <h1>A sua empresa está preparada para evitar ataques informáticos?</h1>
+            <p>Uma experiência simples, visual e intuitiva para sensibilizar colaboradores sobre phishing, passwords, ransomware, engenharia social e resposta a incidentes.</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -433,6 +680,7 @@ def ecra_inicio():
         """
         <div class="card">
             <h3>Descubra em poucos minutos o nível de exposição da sua empresa</h3>
+            <div class="highlight-line"></div>
             <p>O utilizador responde a perguntas simples, passa por simulações práticas e recebe um resultado visual com recomendações.</p>
             <p class="small-text">Ideal para usar em reuniões comerciais, campanhas de sensibilização, ações internas de RH ou como diagnóstico inicial antes de uma formação.</p>
         </div>
@@ -636,9 +884,19 @@ def ecra_resultado():
 
 def sidebar():
     with st.sidebar:
-        st.markdown("## CiberImpacto")
-        st.write("Check-Up Digital")
+        mostrar_logo(largura=190, sidebar=True)
+        st.write("**Check-Up Digital**")
         st.caption("Ferramenta de sensibilização e diagnóstico inicial.")
+
+        uploaded_logo = st.file_uploader(
+            "Carregar logótipo",
+            type=["png", "jpg", "jpeg", "webp"],
+            help="Opcional. Para ficar permanente no GitHub, coloque o ficheiro com o nome logo_ciberimpacto.png na mesma pasta da aplicação.",
+        )
+        if uploaded_logo is not None:
+            st.session_state.logo_bytes = uploaded_logo.getvalue()
+            st.success("Logótipo carregado nesta sessão.")
+
         st.divider()
         st.write("**Percurso:**")
         st.write("1. Dados iniciais")
@@ -667,7 +925,7 @@ elif st.session_state.etapa == "resultado":
 st.markdown(
     """
     <div class="footer">
-        CiberImpacto – Formação e Eventos · Segurança digital com impacto real
+        <strong>CiberImpacto – Formação e Eventos</strong> · Segurança digital com impacto real
     </div>
     """,
     unsafe_allow_html=True,
