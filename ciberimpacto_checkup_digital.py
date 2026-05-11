@@ -87,56 +87,6 @@ st.markdown(
             font-size: 16px;
         }}
 
-        .ransom-box {{
-            background: linear-gradient(135deg, #061426, #2B0B16);
-            color: white;
-            padding: 24px;
-            border-radius: 22px;
-            border: 1px solid rgba(255,255,255,0.14);
-            box-shadow: 0 14px 35px rgba(43, 11, 22, 0.28);
-            margin: 18px 0 14px 0;
-        }}
-
-        .ransom-box h2 {{
-            color: white;
-            margin-top: 0;
-            font-size: 24px;
-        }}
-
-        .ransom-alert {{
-            background: rgba(255,255,255,0.09);
-            border: 1px solid rgba(255,255,255,0.18);
-            border-left: 7px solid #FF4D4D;
-            padding: 16px;
-            border-radius: 16px;
-            margin-top: 14px;
-        }}
-
-        .ransom-alert strong {{
-            color: #FFFFFF;
-            font-size: 17px;
-        }}
-
-        .ransom-alert p {{
-            color: #F4F7FA;
-            font-size: 15px;
-            margin: 8px 0 0 0;
-        }}
-
-        .safe-note {{
-            background: #EFFFFB;
-            color: #083526;
-            border-left: 7px solid {TURQUOISE};
-            padding: 15px 18px;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(5, 35, 80, 0.06);
-            margin: 10px 0 20px 0;
-        }}
-
-        .safe-note strong {{
-            color: {BLUE};
-        }}
-
         .result-box {{
             padding: 24px;
             border-radius: 22px;
@@ -203,54 +153,11 @@ st.markdown(
     <div class="hero">
         <div class="top-badge">🛡️ Check-Up Digital</div>
         <h1>Na ótica do utilizador: sabe identificar um ataque informático?</h1>
-        <p>Veja uma simulação segura de ransomware e responda a 6 situações do dia a dia.</p>
+        <p>Responda a 6 situações do dia a dia e veja o seu nível de atenção digital.</p>
     </div>
     """,
     unsafe_allow_html=True
 )
-
-st.markdown('<div class="section-title">Simulação segura: ransomware</div>', unsafe_allow_html=True)
-
-st.markdown(
-    """
-    <div class="ransom-box">
-        <h2>⚠️ Os seus ficheiros foram bloqueados</h2>
-        <div class="ransom-alert">
-            <strong>Mensagem no ecrã:</strong>
-            <p>“Todos os seus documentos foram encriptados. Para recuperar o acesso, pague nas próximas 24 horas. Não contacte a informática.”</p>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-acao_ransomware = st.selectbox(
-    "O que faria primeiro nesta situação?",
-    [
-        "Selecionar resposta",
-        "Pagava rapidamente para recuperar os ficheiros",
-        "Tentava abrir vários ficheiros para confirmar o problema",
-        "Desligava a ligação à rede e reportava de imediato ao responsável interno",
-        "Ignorava a mensagem e continuava a trabalhar",
-    ],
-    key="simulacao_ransomware"
-)
-
-if acao_ransomware != "Selecionar resposta":
-    if acao_ransomware == "Desligava a ligação à rede e reportava de imediato ao responsável interno":
-        st.success("Resposta recomendada: isolar o equipamento da rede e reportar de imediato.")
-    else:
-        st.error("Atenção: esta ação pode aumentar o impacto do ataque ou atrasar a resposta.")
-
-    st.markdown(
-        """
-        <div class="safe-note">
-            <strong>Lição prática:</strong><br>
-            Não pague, não tente resolver sozinho e não continue a usar o equipamento. Desligue a ligação à Internet/rede, avise rapidamente o responsável interno ou fornecedor de informática e siga o procedimento da empresa.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
 
 st.markdown('<div class="section-title">Check-up rápido</div>', unsafe_allow_html=True)
 st.info("Responda às situações como se estivesse no seu dia de trabalho. O resultado aparece no final.")
